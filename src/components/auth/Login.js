@@ -1,8 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-//import { compose } from 'redux';
-//import { connect } from 'react-redux';
+
+// these are util bc we need to connect to the state
+import { compose } from 'redux';
+import { connect } from 'react-redux';
+
 import { firebaseConnect } from 'react-redux-firebase';
+import { notifyUser } from '../../actions/notifyActions';
+import Alert from '../layout/Alert'
 
 class Login extends Component {
   state = {
@@ -15,7 +20,7 @@ class Login extends Component {
   onSubmit = event => {
     event.preventDefault();
 
-    const { firebase } = this.props;
+    const { firebase, notifyUser } = this.props;
     const { email, password } = this.state;
 
     firebase.auth().signInWithEmailAndPassword(email,password)
@@ -23,15 +28,21 @@ class Login extends Component {
       console.log(user);
       this.props.history.push('/');
     })
-    .catch(error => alert('Invalid login credentials'));
+    .catch(error => notifyUser('Invalid login credentials', 'error'));
   }
 
   render() {
+
+    const { message, messageType } = this.props.notify;
+
     return (
       <div className="row">
         <div className="col-md-6 mx-auto">
           <div className="card">
             <div className="card-body">
+              {message ? (
+                <Alert message={message} messageType={messageType} />
+              ) : null }
               <h1 className="text-center pb-4 pt-3">
                 <span className="text-primary">
                   <i className="fas fa-lock"></i>{' '}
@@ -73,4 +84,9 @@ Login.propTypes = {
   firebase: PropTypes.object.isRequired
 }
 
-export default firebaseConnect()(Login);
+export default compose(
+  firebaseConnect(),
+  connect((state, props) => ({
+    notify: state.notify
+  }), { notifyUser }) // here goes the actions i.e. 'notifyUser'
+)(Login);
