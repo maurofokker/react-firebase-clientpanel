@@ -9,6 +9,7 @@ import { reduxFirestore, firestoreReducer } from 'redux-firestore';
 
 const firebaseConfig = {
   // EDIT WITH FIRESTORE CONFIG DATA FROM CONSOLE
+
 };
 
 // react-redux-firebase config
