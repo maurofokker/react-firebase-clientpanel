@@ -41,8 +41,23 @@ const rootReducer = combineReducers({
   settings: settingsReducer // will appear in redux devtools
 });
 
+// check settings in localStorage
+if (localStorage.getItem('settings') == null) {
+  const defaultSettings = {
+    disableBalanceOnAdd: true,
+    disableBalanceOnEdit: false,
+    allowRegistration: false
+  };
+
+  // set to localStorage
+  localStorage.setItem('settings', JSON.stringify(defaultSettings));
+}
+
 // create initial state
-const initialState = {};
+// settings it is gonna be filled with whatever is put in settings inside localStorage
+const initialState = {
+  settings: JSON.parse(localStorage.getItem('settings'))
+};
 
 // Create store with reducers
 const store = createStoreWithFirebase(
